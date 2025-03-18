@@ -1,7 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto, LoginUserDto } from 'src/common/dto/user.dto';
+import {
+  CreateUserDto,
+  LoginUserDto,
+  UpdatePasswordDto,
+} from 'src/common/dto/user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,12 +27,12 @@ export class AuthController {
   }
 
   @Get('forgot-password')
-  forgotPassword() {
-    return 'forgot-password';
+  forgotPassword(@Body() body: { email: string }) {
+    return this.authService.forgotPassword(body.email);
   }
 
   @Post('reset-password')
-  resetPassword() {
-    return 'reset-password';
+  resetPassword(@Body() body: UpdatePasswordDto) {
+    return this.authService.resetPassword(body);
   }
 }

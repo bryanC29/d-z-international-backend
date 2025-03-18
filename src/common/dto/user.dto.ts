@@ -16,8 +16,8 @@ export class CreateUserDto {
   @Length(3, 20)
   name: string;
 
-  @IsNotEmpty()
-  role: string;
+  @IsOptional()
+  role?: string;
 }
 
 export class LoginUserDto {
@@ -27,4 +27,12 @@ export class LoginUserDto {
 
   @IsNotEmpty()
   password: string;
+}
+
+export class UpdatePasswordDto {
+  @IsNotEmpty()
+  password: string;
+
+  @IsNotEmpty()
+  token: string;
 }
