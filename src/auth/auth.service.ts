@@ -11,7 +11,7 @@ import {
   LoginUserDto,
   UpdatePasswordDto,
 } from 'src/common/dto/user.dto';
-import { User } from 'src/common/entities/user.entity';
+import { User } from 'src/common/entity/user.entity';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
