@@ -5,28 +5,28 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { v4 as uuidv4 } from 'uuid';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import {
   CreateUserDto,
   LoginUserDto,
   UpdatePasswordDto,
 } from 'src/common/dto/user.dto';
-import { User } from 'src/common/entity/user.entity';
-import { Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
+import { User, UserDocument } from 'src/common/schema/user.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<UserDocument>,
     private readonly jwtService: JwtService,
   ) {}
 
   async login(body: LoginUserDto) {
-    const user = await this.userRepository.findOne({
+    const user = await this.userModel.findOne({
       where: { email: body.email },
     });
 
@@ -39,25 +39,27 @@ export class AuthService {
     if (!isPasswordMatch) {
       throw new NotFoundException('User not found');
     } else {
-      const { password, ...result } = user;
-      const token = await this.jwtService.signAsync({ id: user.id });
+      const { password, ...result } = user.toObject();
+      const token = await this.jwtService.signAsync({ uid: user.uid });
       return { ...result, token };
     }
   }
 
   async register(body: CreateUserDto) {
-    const oldUser = await this.userRepository.findOne({
+    const oldUser = await this.userModel.findOne({
       where: { email: body.email },
     });
 
     if (!oldUser) {
       const hashedPassword = await bcrypt.hash(body.password, 10);
 
-      body.id = uuidv4();
-      body.password = hashedPassword;
+      const newUser = new this.userModel({
+        ...body,
+        password: hashedPassword,
+        uid: uuidv4(),
+      });
 
-      this.userRepository.create(new CreateUserDto());
-      await this.userRepository.save(body);
+      await newUser.save();
 
       return { message: 'User created successfully' };
     } else {
@@ -70,7 +72,7 @@ export class AuthService {
   }
 
   async forgotPassword(body: string) {
-    const user = await this.userRepository.findOne({
+    const user = await this.userModel.findOne({
       where: { email: body },
     });
     if (!user) {
@@ -78,7 +80,7 @@ export class AuthService {
     }
 
     const token = await this.jwtService.signAsync({
-      id: user.id,
+      uid: user.uid,
       email: user.email,
       type: 'password-reset',
       timestamp: new Date().toISOString(),
@@ -102,7 +104,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid token');
     }
 
-    const user = await this.userRepository.findOne({
+    const user = await this.userModel.findOne({
       where: { email: decodedToken.email },
     });
 
@@ -112,7 +114,7 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(body.password, 10);
     user.password = hashedPassword;
-    await this.userRepository.save(user);
+    await user.save();
 
     return 'Password updated successfully';
   }
