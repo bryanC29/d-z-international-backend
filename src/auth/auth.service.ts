@@ -26,9 +26,7 @@ export class AuthService {
   ) {}
 
   async login(body: LoginUserDto) {
-    const user = await this.userModel.findOne({
-      where: { email: body.email },
-    });
+    const user = await this.userModel.findOne({ email: body.email }).exec();
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -39,16 +37,14 @@ export class AuthService {
     if (!isPasswordMatch) {
       throw new NotFoundException('User not found');
     } else {
-      const { password, ...result } = user.toObject();
+      const { uid, name, email, role } = user.toObject();
       const token = await this.jwtService.signAsync({ uid: user.uid });
-      return { ...result, token };
+      return { uid, name, email, role, token };
     }
   }
 
   async register(body: CreateUserDto) {
-    const oldUser = await this.userModel.findOne({
-      where: { email: body.email },
-    });
+    const oldUser = await this.userModel.findOne({ email: body.email }).exec();
 
     if (!oldUser) {
       const hashedPassword = await bcrypt.hash(body.password, 10);
@@ -72,9 +68,8 @@ export class AuthService {
   }
 
   async forgotPassword(body: string) {
-    const user = await this.userModel.findOne({
-      where: { email: body },
-    });
+    const user = await this.userModel.findOne({ email: body }).exec();
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -104,9 +99,9 @@ export class AuthService {
       throw new UnauthorizedException('Invalid token');
     }
 
-    const user = await this.userModel.findOne({
-      where: { email: decodedToken.email },
-    });
+    const user = await this.userModel
+      .findOne({ email: decodedToken.email })
+      .exec();
 
     if (!user) {
       throw new NotFoundException('User not found');
