@@ -24,7 +24,7 @@ import { ProductModule } from './product/product.module';
       driver: ApolloDriver,
       playground: false,
       autoSchemaFile: true,
-      include: [UserModule],
+      include: [UserModule, ProductModule],
     }),
     AuthModule,
     UserModule,
