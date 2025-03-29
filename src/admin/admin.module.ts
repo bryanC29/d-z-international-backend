@@ -1,0 +1,34 @@
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdminController } from './admin.controller';
+import { AdminService } from './admin.service';
+import { OrdersController } from './orders/orders.controller';
+import { CategoriesController } from './categories/categories.controller';
+import { CouponsController } from './coupons/coupons.controller';
+import { ProductsController } from './products/products.controller';
+import { ReturnsController } from './returns/returns.controller';
+import { User, UserSchema } from 'src/common/schema/user.schema';
+import { Product, ProductSchema } from 'src/common/schema/product.schema';
+import { Return } from 'src/common/entity/return.entity';
+import { Order } from 'src/common/entity/order.entity';
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: Product.name, schema: ProductSchema },
+    ]),
+    TypeOrmModule.forFeature([Return, Order]),
+  ],
+  controllers: [
+    AdminController,
+    OrdersController,
+    CategoriesController,
+    CouponsController,
+    ProductsController,
+    ReturnsController,
+  ],
+  providers: [AdminService],
+})
+export class AdminModule {}
