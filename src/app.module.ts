@@ -14,6 +14,7 @@ import { ProductModule } from './product/product.module';
 import { AdminModule } from './admin/admin.module';
 import { ReturnModule } from './return/return.module';
 import { GraphQLConfig } from './common/config/graphql.config';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { GraphQLConfig } from './common/config/graphql.config';
     ProductModule,
     AdminModule,
     ReturnModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
