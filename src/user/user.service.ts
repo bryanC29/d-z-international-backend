@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Response } from 'express';
 import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/common/schema/user.schema';
 
@@ -16,15 +17,12 @@ export class UserService {
     return this.userModel.findOne({ uid }).exec();
   }
 
-  async updateUser(
-    uid: string,
-    updateData: Partial<User>,
-  ): Promise<User | null> {
+  async updateUser(uid: string, updateData: Partial<User>, res: Response) {
     if (!updateData || typeof updateData !== 'object') {
       throw new Error('Invalid update data');
     }
 
-    const updateDoc: any = {};
+    const updateDoc: Record<string, unknown> = {};
 
     for (const [key, value] of Object.entries(updateData)) {
       if (typeof key !== 'string') {
@@ -49,12 +47,14 @@ export class UserService {
       throw new Error('No valid fields to update');
     }
 
-    return this.userModel
+    const updatedUser = await this.userModel
       .findOneAndUpdate({ uid }, { $set: updateDoc }, { new: true })
       .exec();
+
+    return res.send({ updatedUser });
   }
 
-  async softDeleteUser(uid: string): Promise<User | null> {
+  async softDeleteUser(uid: string, res: Response) {
     const deletedUser = await this.userModel
       .findOneAndUpdate(
         { uid },
@@ -63,6 +63,6 @@ export class UserService {
       )
       .exec();
 
-    return deletedUser;
+    return res.send({ deletedUser });
   }
 }

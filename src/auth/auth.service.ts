@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  Res,
   UnauthorizedException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,6 +17,7 @@ import {
   UpdatePasswordDto,
 } from 'src/common/dto/user.dto';
 import { User, UserDocument } from 'src/common/schema/user.schema';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +27,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(body: LoginUserDto) {
+  async login(body: LoginUserDto, @Res() res: Response) {
     const user = await this.userModel.findOne({ email: body.email }).exec();
 
     if (!user) {
@@ -38,8 +40,27 @@ export class AuthService {
       throw new NotFoundException('User not found');
     } else {
       const { uid, name, email, role } = user.toObject();
-      const token = await this.jwtService.signAsync({ uid: user.uid });
-      return { uid, name, email, role, token };
+      const token = await this.jwtService.signAsync({
+        uid: user.uid,
+        role: user.role,
+      });
+
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
+      res.setHeader('Authorization', `Bearer ${token}`);
+
+      return res.send({
+        message: 'Login successful',
+        uid,
+        name,
+        email,
+        role,
+        token,
+      });
     }
   }
 
@@ -63,8 +84,12 @@ export class AuthService {
     }
   }
 
-  logout() {
-    return 'logout';
+  logout(@Res() res: Response) {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: true,
+    });
+    return { message: 'Logout Successful' };
   }
 
   async forgotPassword(body: string) {

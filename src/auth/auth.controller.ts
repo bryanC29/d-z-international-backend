@@ -1,19 +1,20 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   CreateUserDto,
   LoginUserDto,
   UpdatePasswordDto,
 } from 'src/common/dto/user.dto';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  login(@Body() body: LoginUserDto) {
-    return this.authService.login(body);
+  login(@Body() body: LoginUserDto, @Res() res: Response) {
+    return this.authService.login(body, res);
   }
 
   @Post('register')
@@ -22,8 +23,8 @@ export class AuthController {
   }
 
   @Get('logout')
-  logout() {
-    return 'logout';
+  logout(@Res() res: Response) {
+    return this.authService.logout(res);
   }
 
   @Get('forgot-password')
