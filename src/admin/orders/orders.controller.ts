@@ -1,14 +1,15 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Param, Put } from '@nestjs/common';
+import { Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { AdminService } from '../admin.service';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('admin/orders')
 export class OrdersController {
   constructor(private readonly adminService: AdminService) {}
 
   @Get()
-  getOrders() {
-    return this.adminService.getAllOrders();
+  getOrders(@Query() paginationDto: PaginationDto) {
+    return this.adminService.getAllOrders(paginationDto);
   }
 
   @Get(':id')

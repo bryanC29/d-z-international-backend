@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Model } from 'mongoose';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { Order } from 'src/common/entity/order.entity';
 import { Return } from 'src/common/entity/return.entity';
 import { Product, ProductDocument } from 'src/common/schema/product.schema';
@@ -25,8 +26,12 @@ export class AdminService {
     private readonly orderRepository: Repository<Order>,
   ) {}
 
-  async getAllReturns() {
-    const returns = await this.returnRepository.find();
+  async getAllReturns(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
+    const returns = await this.returnRepository.findAndCount({
+      take: limit,
+      skip: offset,
+    });
 
     if (!returns) {
       throw new NotFoundException('No returns found');
@@ -59,8 +64,12 @@ export class AdminService {
     return `Delete product with id ${id}`;
   }
 
-  async getAllOrders() {
-    const orders = await this.orderRepository.find();
+  async getAllOrders(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
+    const orders = await this.orderRepository.findAndCount({
+      take: limit,
+      skip: offset,
+    });
 
     if (!orders) {
       throw new NotFoundException('No orders found');
