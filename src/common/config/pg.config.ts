@@ -1,14 +1,22 @@
 /* eslint-disable prettier/prettier */
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { join } from 'path';
+import * as path from 'path';
+import { ConfigService } from '@nestjs/config';
 
-export const PostgreSQLConfig: TypeOrmModuleOptions = {
-  type: 'postgres',
-  host: 'localhost',
-  port: 5456,
-  username: 'postgres',
-  password: '123',
-  database: 'd_z_international',
-  entities: [join(__dirname, '../../', '**', '*.entity{.ts,.js}')],
-  synchronize: true,
+export const PostgreSQLConfig = (
+  configService: ConfigService,
+): Promise<TypeOrmModuleOptions> => {
+  const config: TypeOrmModuleOptions = {
+    type: 'postgres',
+    host: configService.get<string>('DB_HOST'),
+    port: configService.get<number>('DB_PORT'),
+    username: configService.get<string>('DB_USERNAME'),
+    password: configService.get<string>('DB_PASSWORD'),
+    database: configService.get<string>('DB_DATABASE'),
+    entities: [path.join(__dirname, '**/*.entity.{ts,js}')],
+    synchronize: configService.get<string>('PRODUCTION') == 'false',
+    logging: configService.get<string>('PRODUCTION') == 'false',
+  };
+
+  return Promise.resolve(config);
 };

@@ -1,5 +1,8 @@
 /* eslint-disable prettier/prettier */
+import { ConfigService } from '@nestjs/config';
 
-export const MongooseConfig = {
-  uri: 'mongodb://localhost:27017/d_z_international',
+export const MongooseConfig = (configService: ConfigService) => {
+  return {
+    uri: configService.get<string>('MONGO_URI'),
+  };
 };

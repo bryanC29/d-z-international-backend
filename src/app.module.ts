@@ -15,14 +15,22 @@ import { AdminModule } from './admin/admin.module';
 import { ReturnModule } from './return/return.module';
 import { GraphQLConfig } from './common/config/graphql.config';
 import { OrderModule } from './order/order.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRootAsync({
-      useFactory: () => PostgreSQLConfig,
+      useFactory: (configService: ConfigService) =>
+        PostgreSQLConfig(configService),
+      inject: [ConfigService],
     }),
     MongooseModule.forRootAsync({
-      useFactory: () => MongooseConfig,
+      useFactory: (configService: ConfigService) =>
+        MongooseConfig(configService),
+      inject: [ConfigService],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>(GraphQLConfig),
     AuthModule,
