@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 export const PostgreSQLConfig = (
   configService: ConfigService,
 ): Promise<TypeOrmModuleOptions> => {
-  const isProduction = configService.get<string>('PRODUCTION') == 'true';
+  const isTesting = configService.get<string>('NODE_ENV') == 'test';
 
   let config: TypeOrmModuleOptions = {
     type: 'postgres',
@@ -16,16 +16,15 @@ export const PostgreSQLConfig = (
     password: configService.get<string>('DB_PASSWORD'),
     database: configService.get<string>('DB_DATABASE'),
     entities: [path.join(__dirname, '../../', '**', '*.entity{.ts,.js}')],
-    synchronize: configService.get<string>('PRODUCTION') == 'false',
-    logging: configService.get<string>('PRODUCTION') == 'false',
+    synchronize: configService.get<string>('NODE_ENV') != 'production',
+    logging: configService.get<string>('NODE_ENV') != 'production',
   };
 
-  if (isProduction) {
+  if (isTesting) {
     config = {
       ...config,
       ssl: {
         rejectUnauthorized: false,
-        ca: configService.get<string>('DB_CA_CERT'),
       },
     };
   }
