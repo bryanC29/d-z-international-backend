@@ -7,6 +7,13 @@ export type ProductDocument = Product & Document;
 
 @ObjectType()
 @Schema()
+export class GalleryItem {
+  @Field()
+  @Prop({ required: true })
+  image_url: string;
+}
+@ObjectType()
+@Schema()
 export class Review {
   @Field({ nullable: true })
   @Prop({ required: true })
@@ -76,9 +83,9 @@ export class Product {
   @Prop({ required: true })
   details: string;
 
-  @Field(() => [String])
-  @Prop({ type: [String], required: true })
-  gallery: string[];
+  @Field(() => [GalleryItem])
+  @Prop({ type: [GalleryItem], required: true })
+  gallery: GalleryItem[];
 
   @Field(() => [String])
   @Prop({ type: [String], required: true })

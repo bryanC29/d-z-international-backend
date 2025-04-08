@@ -4,11 +4,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Model } from 'mongoose';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { CreateProductDto } from 'src/common/dto/product.dto';
 import { Order } from 'src/common/entity/order.entity';
 import { Return } from 'src/common/entity/return.entity';
 import { Product, ProductDocument } from 'src/common/schema/product.schema';
 import { User, UserDocument } from 'src/common/schema/user.schema';
 import { Repository } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class AdminService {
@@ -50,8 +52,15 @@ export class AdminService {
     return returnItem;
   }
 
-  async createProduct(body: any) {
-    const newProduct = await this.productModel.create(body);
+  async createProduct(body: CreateProductDto) {
+    const newProduct = await this.productModel.create({
+      ...body,
+      pid: uuid(),
+    });
+
+    if (!newProduct) {
+      throw new NotFoundException('Product not created');
+    }
 
     return newProduct;
   }

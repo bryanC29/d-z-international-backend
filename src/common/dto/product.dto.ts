@@ -1,0 +1,55 @@
+/* eslint-disable prettier/prettier */
+import { Type } from 'class-transformer';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsUrl,
+  ValidateNested,
+} from 'class-validator';
+
+export class GallaryClassDto {
+  @IsNotEmpty()
+  @IsUrl()
+  image_url: string;
+}
+
+export class CreateProductDto {
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  category: string;
+
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  media: string[];
+
+  @IsNotEmpty()
+  @IsString()
+  description: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  price: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  offer_price: number;
+
+  @IsNotEmpty()
+  @IsString()
+  details: string;
+
+  @IsNotEmpty()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => GallaryClassDto)
+  gallery: GallaryClassDto[];
+}
