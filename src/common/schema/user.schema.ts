@@ -110,9 +110,9 @@ export class User {
   @Prop()
   dob: Date;
 
-  @Field({ nullable: true })
-  @Prop()
-  address: string;
+  // @Field({ nullable: true })
+  // @Prop()
+  // address: string;
 
   @Field(() => [Address], { nullable: 'itemsAndList' })
   @Prop({ type: [Address], required: false })

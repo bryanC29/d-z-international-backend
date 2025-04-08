@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Model } from 'mongoose';
+import { UpdateProfileDto } from 'src/common/dto/user.dto';
 import { User, UserDocument } from 'src/common/schema/user.schema';
 
 @Injectable()
@@ -17,41 +18,25 @@ export class UserService {
     return this.userModel.findOne({ uid }).exec();
   }
 
-  async updateUser(uid: string, updateData: Partial<User>, res: Response) {
-    if (!updateData || typeof updateData !== 'object') {
-      throw new Error('Invalid update data');
-    }
+  async updateUser(
+    uid: string,
+    updateProfileDto: UpdateProfileDto,
+    res: Response,
+  ) {
+    try {
+      const updatedUser = await this.userModel
+        .findOneAndUpdate({ uid }, { $set: updateProfileDto }, { new: true })
+        .exec();
 
-    const updateDoc: Record<string, unknown> = {};
-
-    for (const [key, value] of Object.entries(updateData)) {
-      if (typeof key !== 'string') {
-        throw new Error(
-          `Invalid key type: ${typeof key}. Key must be a string.`,
-        );
-      }
-      if (value === undefined || value === null) {
-        continue;
+      if (!updatedUser) {
+        return res.status(404).send({ message: 'User not found' });
       }
 
-      if (Array.isArray(value)) {
-        updateDoc[key] = value;
-      } else if (typeof value === 'object') {
-        updateDoc[key] = value;
-      } else {
-        updateDoc[key] = value;
-      }
+      return res.status(200).send(updatedUser);
+    } catch (error) {
+      console.error('Error updating user:', error);
+      return res.status(500).send({ message: 'Internal server error' });
     }
-
-    if (Object.keys(updateDoc).length === 0) {
-      throw new Error('No valid fields to update');
-    }
-
-    const updatedUser = await this.userModel
-      .findOneAndUpdate({ uid }, { $set: updateDoc }, { new: true })
-      .exec();
-
-    return res.send({ updatedUser });
   }
 
   async softDeleteUser(uid: string, res: Response) {

@@ -39,3 +39,11 @@ export class UpdatePasswordDto {
   @IsNotEmpty()
   token: string;
 }
+
+export class UpdateProfileDto {
+  @IsOptional()
+  number?: string;
+
+  @IsOptional()
+  profile_url?: string;
+}
