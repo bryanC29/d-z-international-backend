@@ -16,6 +16,7 @@ import { ReturnModule } from './return/return.module';
 import { GraphQLConfig } from './common/config/graphql.config';
 import { OrderModule } from './order/order.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CartModule } from './cart/cart.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     AdminModule,
     ReturnModule,
     OrderModule,
+    CartModule,
   ],
   controllers: [AppController],
   providers: [AppService],

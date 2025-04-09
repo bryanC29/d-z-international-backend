@@ -89,7 +89,7 @@ export class AuthService {
       httpOnly: true,
       secure: true,
     });
-    return { message: 'Logout Successful' };
+    return res.send({ message: 'Logout Successful' });
   }
 
   async forgotPassword(body: string) {
