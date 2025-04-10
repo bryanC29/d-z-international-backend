@@ -12,16 +12,8 @@ import {
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
-import { Request as ExpressRequest } from 'express';
 import { CartItemDto, EditCartItemDto } from 'src/common/dto/cart.dto';
-
-interface userPayload {
-  uid: string;
-}
-
-interface JwtTokenPayload extends ExpressRequest {
-  user: userPayload;
-}
+import { JwtTokenPayload } from 'src/common/dto/payload.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('cart')
