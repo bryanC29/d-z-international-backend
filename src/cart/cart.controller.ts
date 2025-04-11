@@ -12,7 +12,11 @@ import {
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
-import { CartItemDto, EditCartItemDto } from 'src/common/dto/cart.dto';
+import {
+  CartItemDto,
+  CheckoutDto,
+  EditCartItemDto,
+} from 'src/common/dto/cart.dto';
 import { JwtTokenPayload } from 'src/common/dto/payload.dto';
 
 @UseGuards(JwtAuthGuard)
@@ -42,5 +46,10 @@ export class CartController {
   @Delete(':id')
   removeFromCart(@Request() req: JwtTokenPayload, @Param('id') id: string) {
     return this.cartService.removeFromCart(req.user.uid, id);
+  }
+
+  @Post('checkout')
+  checkout(@Request() req: JwtTokenPayload, @Body() body: CheckoutDto) {
+    return this.cartService.checkout(req.user.uid, body);
   }
 }

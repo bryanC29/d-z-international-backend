@@ -21,3 +21,13 @@ export class EditCartItemDto {
   @IsNumberString()
   quantity?: number;
 }
+
+export class CheckoutDto {
+  @IsOptional()
+  @IsString()
+  pid?: string;
+
+  @IsOptional()
+  @IsNumberString()
+  quantity?: number;
+}
