@@ -3,9 +3,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Model } from 'mongoose';
+import { UpdateOrderDto } from 'src/common/dto/order.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { CreateProductDto } from 'src/common/dto/product.dto';
 import { Order } from 'src/common/entity/order.entity';
+import { OrderItem } from 'src/common/entity/orderItem.entity';
 import { Return } from 'src/common/entity/return.entity';
 import { Product, ProductDocument } from 'src/common/schema/product.schema';
 import { User, UserDocument } from 'src/common/schema/user.schema';
@@ -26,6 +28,9 @@ export class AdminService {
 
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
+
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepository: Repository<OrderItem>,
   ) {}
 
   async getAllReturns(paginationDto: PaginationDto) {
@@ -94,10 +99,26 @@ export class AdminService {
       throw new NotFoundException(`Order with id ${id} not found`);
     }
 
-    return order;
+    const orderItems = await this.orderItemRepository.find({
+      where: { order_id: id },
+    });
+
+    return { order, orderItems };
   }
 
-  updateOrderById(id: number) {
-    return `Update order ${id}`;
+  async updateOrderById(id: number, body: UpdateOrderDto) {
+    const order = await this.orderRepository.findOne({ where: { id } });
+    if (!order) {
+      throw new NotFoundException(`Order with id ${id} not found`);
+    }
+
+    await this.orderRepository.update(id, {
+      status: body.status,
+      tracking_status: body.trackingStatus,
+    });
+
+    const updatedOrder = await this.orderRepository.findOne({ where: { id } });
+
+    return updatedOrder;
   }
 }

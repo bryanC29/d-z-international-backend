@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Param, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { AdminService } from '../admin.service';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { UpdateOrderDto } from 'src/common/dto/order.dto';
 
 @Controller('admin/orders')
 export class OrdersController {
@@ -18,7 +19,7 @@ export class OrdersController {
   }
 
   @Put(':id')
-  updateOrder(@Param('id') id: number) {
-    return this.adminService.updateOrderById(id);
+  updateOrder(@Param('id') id: number, @Body() body: UpdateOrderDto) {
+    return this.adminService.updateOrderById(id, body);
   }
 }

@@ -12,6 +12,7 @@ import { User, UserSchema } from 'src/common/schema/user.schema';
 import { Product, ProductSchema } from 'src/common/schema/product.schema';
 import { Return } from 'src/common/entity/return.entity';
 import { Order } from 'src/common/entity/order.entity';
+import { OrderItem } from 'src/common/entity/orderItem.entity';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { Order } from 'src/common/entity/order.entity';
       { name: User.name, schema: UserSchema },
       { name: Product.name, schema: ProductSchema },
     ]),
-    TypeOrmModule.forFeature([Return, Order]),
+    TypeOrmModule.forFeature([Return, Order, OrderItem]),
   ],
   controllers: [
     AdminController,
