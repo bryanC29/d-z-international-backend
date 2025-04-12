@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { UpdateOrderDto } from 'src/common/dto/order.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { CreateProductDto } from 'src/common/dto/product.dto';
+import { UpdateReturnDto } from 'src/common/dto/return.dto';
 import { Order } from 'src/common/entity/order.entity';
 import { OrderItem } from 'src/common/entity/orderItem.entity';
 import { Return } from 'src/common/entity/return.entity';
@@ -47,14 +48,23 @@ export class AdminService {
     return returns;
   }
 
-  async updateReturnById(id: number) {
+  async updateReturnById(id: number, body: UpdateReturnDto) {
     const returnItem = await this.returnRepository.findOne({ where: { id } });
 
     if (!returnItem) {
       throw new NotFoundException(`Return with id ${id} not found`);
     }
 
-    return returnItem;
+    await this.returnRepository.update(id, {
+      status: body.status,
+      trackingStatus: body.trackingStatus,
+    });
+
+    const updatedReturn = await this.returnRepository.findOne({
+      where: { id },
+    });
+
+    return updatedReturn;
   }
 
   async createProduct(body: CreateProductDto) {
