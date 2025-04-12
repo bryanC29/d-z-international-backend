@@ -1,5 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Model } from 'mongoose';
@@ -29,17 +33,22 @@ export class UserService {
         .exec();
 
       if (!updatedUser) {
-        return res.status(404).send({ message: 'User not found' });
+        throw new NotFoundException('User not found');
       }
 
       return res.status(200).send(updatedUser);
     } catch (error) {
       console.error('Error updating user:', error);
-      return res.status(500).send({ message: 'Internal server error' });
+      throw new InternalServerErrorException('Failed to update user');
     }
   }
 
   async softDeleteUser(uid: string, res: Response) {
+    const user = await this.userModel.findOne({ uid }).exec();
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     const deletedUser = await this.userModel
       .findOneAndUpdate(
         { uid },

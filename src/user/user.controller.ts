@@ -3,8 +3,8 @@ import {
   Body,
   Controller,
   Delete,
-  Param,
   Patch,
+  Request,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -12,23 +12,24 @@ import { UserService } from './user.service';
 import { Response } from 'express';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { UpdateProfileDto } from 'src/common/dto/user.dto';
+import { JwtTokenPayload } from 'src/common/dto/payload.dto';
 
 @Controller('user')
 @UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Patch(':uid')
+  @Patch()
   async update(
-    @Param('uid') uid: string,
+    @Request() req: JwtTokenPayload,
     @Body() updateProfileDto: UpdateProfileDto,
     @Res() res: Response,
   ) {
-    return this.userService.updateUser(uid, updateProfileDto, res);
+    return this.userService.updateUser(req.user.uid, updateProfileDto, res);
   }
 
   @Delete()
-  async softDelete(@Body() uid: string, @Res() res: Response) {
-    return this.userService.softDeleteUser(uid, res);
+  async softDelete(@Res() res: Response, @Request() req: JwtTokenPayload) {
+    return this.userService.softDeleteUser(req.user.uid, res);
   }
 }
