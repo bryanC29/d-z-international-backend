@@ -27,10 +27,10 @@ export class Return {
   uid: string;
 
   @Column({
-    type: 'varchar',
+    type: 'integer',
     nullable: false,
   })
-  orderId: string;
+  orderId: number;
 
   @Column({
     type: 'varchar',
