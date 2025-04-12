@@ -10,3 +10,13 @@ export class CreateReturnDto {
   @IsString()
   productItemId: string;
 }
+
+export class UpdateReturnDto {
+  @IsNotEmpty()
+  @IsString()
+  status: string;
+
+  @IsNotEmpty()
+  @IsString()
+  trackingStatus: string;
+}
