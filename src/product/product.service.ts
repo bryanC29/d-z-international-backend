@@ -15,7 +15,7 @@ export class ProductService {
     return this.productModel.find().exec();
   }
 
-  async findOneByUid(uid: string): Promise<Product | null> {
-    return this.productModel.findOne({ uid }).exec();
+  async findOneByUid(pid: string): Promise<Product | null> {
+    return this.productModel.findOne({ pid }).exec();
   }
 }

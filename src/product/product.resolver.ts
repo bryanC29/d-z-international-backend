@@ -13,7 +13,7 @@ export class ProductResolver {
   }
 
   @Query(() => Product, { nullable: true })
-  async product(@Args('uid') uid: string): Promise<Product | null> {
-    return this.productService.findOneByUid(uid);
+  async product(@Args('pid') pid: string): Promise<Product | null> {
+    return this.productService.findOneByUid(pid);
   }
 }
