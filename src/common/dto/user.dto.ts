@@ -1,5 +1,14 @@
 /* eslint-disable prettier/prettier */
-import { IsEmail, IsNotEmpty, IsOptional, Length } from 'class-validator';
+import { Transform } from 'class-transformer';
+import {
+  IsBooleanString,
+  IsEmail,
+  IsIn,
+  IsNotEmpty,
+  IsNumberString,
+  IsOptional,
+  Length,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsOptional()
@@ -46,4 +55,42 @@ export class UpdateProfileDto {
 
   @IsOptional()
   profile_url?: string;
+}
+
+export class UpdateAddressDto {
+  @IsNotEmpty()
+  line1: string;
+
+  @IsNotEmpty()
+  line2: string;
+
+  @IsNotEmpty()
+  city: string;
+
+  @IsNotEmpty()
+  state: string;
+
+  @IsOptional()
+  @Transform(({ value }) => (value ?? 'India') as string)
+  country?: string = 'India';
+
+  @IsNotEmpty()
+  @IsNumberString()
+  code: number;
+
+  @IsNotEmpty()
+  @IsNumberString()
+  number: string;
+
+  @IsNotEmpty()
+  @IsIn(['work', 'home'])
+  type: 'work' | 'home';
+
+  @IsNotEmpty()
+  @IsBooleanString()
+  weekend_availability: boolean;
+
+  @IsOptional()
+  @IsNumberString()
+  alternate_number?: string;
 }
