@@ -29,6 +29,13 @@ export class Order {
   uid: string;
 
   @Column({
+    type: 'int',
+    nullable: false,
+    default: 0,
+  })
+  address_id: number;
+
+  @Column({
     type: 'enum',
     enum: OrderStatus,
     default: OrderStatus.PENDING,
