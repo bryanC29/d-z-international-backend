@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
@@ -87,9 +87,9 @@ export class Product {
   @Prop({ type: [GalleryItem], required: true })
   gallery: GalleryItem[];
 
-  @Field(() => [String])
-  @Prop({ type: [String], required: true })
-  top_points: string[];
+  @Field(() => Float)
+  @Prop({ required: true })
+  top_points: number;
 
   @Field(() => [Review], { nullable: true })
   @Prop({ type: [Review], required: false })

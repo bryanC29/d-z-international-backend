@@ -5,6 +5,7 @@ import {
   IsArray,
   IsNotEmpty,
   IsNumber,
+  IsNumberString,
   IsString,
   IsUrl,
   ValidateNested,
@@ -46,6 +47,10 @@ export class CreateProductDto {
   @IsNotEmpty()
   @IsString()
   details: string;
+
+  @IsNotEmpty()
+  @IsNumberString()
+  top_points: number;
 
   @IsNotEmpty()
   @ArrayNotEmpty()
