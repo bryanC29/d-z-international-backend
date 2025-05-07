@@ -10,6 +10,10 @@ export type UserDocument = User & Document;
 export class Address {
   @Field()
   @Prop({ required: true })
+  name: string;
+
+  @Field()
+  @Prop({ required: true })
   line1: string;
 
   @Field({ nullable: true })

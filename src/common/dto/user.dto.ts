@@ -59,6 +59,10 @@ export class UpdateProfileDto {
 
 export class UpdateAddressDto {
   @IsNotEmpty()
+  @Length(3, 20)
+  name: string;
+
+  @IsNotEmpty()
   line1: string;
 
   @IsNotEmpty()
