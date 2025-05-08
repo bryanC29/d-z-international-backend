@@ -16,9 +16,10 @@ export class OrderService {
     private readonly orderItemRepository: Repository<OrderItem>,
   ) {}
 
-  async getAllOrders(paginationDto: PaginationDto) {
+  async getAllOrders(paginationDto: PaginationDto, uid: string) {
     const { limit = 10, offset = 0 } = paginationDto;
     const orders = await this.orderRepository.findAndCount({
+      where: { uid },
       take: limit,
       skip: offset,
     });
