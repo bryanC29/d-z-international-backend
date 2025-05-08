@@ -30,4 +30,8 @@ export class CheckoutDto {
   @IsOptional()
   @IsNumberString()
   quantity?: number;
+
+  @IsNotEmpty()
+  @IsNumberString()
+  address_id: string;
 }

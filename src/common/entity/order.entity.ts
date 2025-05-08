@@ -29,11 +29,11 @@ export class Order {
   uid: string;
 
   @Column({
-    type: 'int',
+    type: 'varchar',
     nullable: false,
-    default: 0,
+    default: '0',
   })
-  address_id: number;
+  address_id: string;
 
   @Column({
     type: 'enum',

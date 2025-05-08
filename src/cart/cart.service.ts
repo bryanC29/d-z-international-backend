@@ -129,7 +129,7 @@ export class CartService {
       throw new NotFoundException('Cart is empty');
     }
 
-    const order = { uid: uid };
+    const order = { uid: uid, address: body.address_id };
     const orderData = await this.orderRepository.save(order);
     if (!orderData) {
       throw new InternalServerErrorException('Failed to create order item');
