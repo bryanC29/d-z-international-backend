@@ -92,6 +92,7 @@ export class CartService {
 
     if (hasPid) {
       const quantity = body.quantity ? body.quantity : 1;
+      const address = body.quantity ? body.address_id : 0;
       const pid = body.pid;
       try {
         const item = await this.productModel.findOne({ pid: pid }).exec();
@@ -105,7 +106,7 @@ export class CartService {
         });
       }
 
-      const order = { uid: uid };
+      const order = { uid: uid, address_id: address.toString() };
       const orderData = await this.orderRepository.save(order);
       if (!orderData) {
         throw new InternalServerErrorException('Failed to create order item');
