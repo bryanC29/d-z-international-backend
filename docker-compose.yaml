@@ -1,0 +1,44 @@
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - '3200:3200'
+    depends_on:
+      - postgres
+      - mongo
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: d_z_international
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  mongo:
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - '27017:27017'
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8085:8080
+
+volumes:
+  pgdata:
+  mongodata:
